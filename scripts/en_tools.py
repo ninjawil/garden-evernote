@@ -661,11 +661,12 @@ def weekly_weather(folder_loc):
 
     weekly_data = nested_dict()
 
+    folder_loc  = folder_loc.replace('/garden-evernote', '')
+
     # Grab data from csv files    
     for year in range(year_current, year_current - 2, -1):
-        print year
         try:
-            with open('{fl}/data/weekly_summary_{year}.csv'.format(fl= folder_loc, year= year), 'rb') as f:
+            with open('{fl}/weather/data/weekly_summary_{year}.csv'.format(fl= folder_loc, year= year), 'rb') as f:
                 reader = csv.reader(f)
                 data = list(reader)
 
