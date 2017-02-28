@@ -23,12 +23,7 @@ function displayGarden() {
     $('<div class="row"><div id="garden-input-bar-section" class="text-left"></div></div>').appendTo('#graph-container');
     $('<div class="row"><div id="chart-section"></div></div>').appendTo('#graph-container');
 
-
-    //getFileData('weather_data/gardening.json', 'json', minimumSearchBar, []);
-    // getFileData('weather_data/gardening_web.json', 'json', drawGardenSearchBar, []);
-    getFileData('weather_data/gardening_web.json', 'json', drawGardenChart, []);
-	//getFileData('weather_data/state_tags.json', 'json', drawGardenChart, [sorted_data, garden_data]);
-
+    getFileData('garden_data/gardening_web.json', 'json', drawGardenChart, []);
 
 }
 
@@ -59,7 +54,7 @@ function minimumSearchBar(garden_data) {
 
     var sorted_data = sortGardenData(garden_data, search_data);
 
-    getFileData('weather_data/state_tags.json', 'json', drawGardenChart, [sorted_data, garden_data]);
+    getFileData('garden_data/state_tags.json', 'json', drawGardenChart, [sorted_data, garden_data]);
 
 
 }
