@@ -112,7 +112,7 @@ function drawGardenChart(notes_to_display) {
 
 	console.time("sort_data");
 
-	var HTMLtable = '<div class="table-responsive"><table id="diary" class="table table-condensed" cellspacing="0">';
+	var HTMLtable = '<div class="table-responsive"><table id="diary" class="table table-condensed nowrap" cellspacing="0">';
 	HTMLtable += '<thead><tr bgcolor="#E0E0E0"><th colspan="4" style="text-align:right">Month</th><th style="text-align:center" ';
 	HTMLtable += ['colspan="5">Jan','colspan="3">Feb','colspan="5">Mar','colspan="4">Apr','colspan="4">May','colspan="4">Jun','colspan="5">Jul','colspan="5">Aug','colspan="4">Sep','colspan="5">Oct','colspan="4">Nov','colspan="5">Dec'].join('</th><th style="text-align:center" ');
 	HTMLtable += '</th></tr>';
