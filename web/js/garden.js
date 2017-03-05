@@ -353,7 +353,7 @@ function drawGardenChart(notes_to_display) {
 
 		// Draw DataTable
 	    $('#diary').DataTable( {
-			"scrollY": 650,
+			"scrollY": '50vh',
 			"scrollX": 400,
 			"autoWidth": false,
 			"lengthMenu": [15, 25, 50, 100],
