@@ -16,12 +16,15 @@ function displayGarden() {
 	$('li').removeClass('active');
 	$('#garden').parent().addClass('active');
 
+	$('#sidebar').hide();
+	$('#main').removeClass('col-sm-10').addClass('col-sm-12');
+
 	// Clear chart area
 	$('#graph-container').empty();
 
     // Set up chart screen sections
     $('<div class="row"><div id="garden-input-bar-section" class="text-left"></div></div>').appendTo('#graph-container');
-    $('<div class="row"><div id="chart-section"></div></div>').appendTo('#graph-container');
+    $('<div class="row"><div id="chart-section" style="margin: 5px;"></div></div>').appendTo('#graph-container');
 
     getFileData('garden_data/gardening_web.json', 'json', drawGardenChart, []);
 
