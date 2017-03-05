@@ -17,14 +17,15 @@ function displayGarden() {
 	$('#garden').parent().addClass('active');
 
 	$('#sidebar').hide();
+	// $('#sidebar').animate({width: 'toggle'});
 	$('#main').removeClass('col-sm-10').addClass('col-sm-12');
 
 	// Clear chart area
 	$('#graph-container').empty();
+	$('#graph-container').css('overflowY', 'hidden');
 
     // Set up chart screen sections
-    $('<div class="row"><div id="garden-input-bar-section" class="text-left"></div></div>').appendTo('#graph-container');
-    $('<div class="row"><div id="chart-section" style="margin: 5px;"></div></div>').appendTo('#graph-container');
+    $('<div class="row"><div id="chart-section" style="margin: 1vh; padding-right: 1.2vh;"></div></div>').appendTo('#graph-container');
 
     getFileData('garden_data/gardening_web.json', 'json', drawGardenChart, []);
 
@@ -356,7 +357,7 @@ function drawGardenChart(notes_to_display) {
 
 		// Draw DataTable
 	    $('#diary').DataTable( {
-			"scrollY": '50vh',
+			"scrollY": '45vh',
 			"scrollX": 400,
 			"autoWidth": false,
 			"lengthMenu": [15, 25, 50, 100],
