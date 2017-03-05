@@ -16,12 +16,16 @@ function displayGarden() {
 	$('li').removeClass('active');
 	$('#garden').parent().addClass('active');
 
+	$('#sidebar').hide();
+	// $('#sidebar').animate({width: 'toggle'});
+	$('#main').removeClass('col-sm-10').addClass('col-sm-12');
+
 	// Clear chart area
 	$('#graph-container').empty();
+	$('#graph-container').css('overflowY', 'hidden');
 
     // Set up chart screen sections
-    $('<div class="row"><div id="garden-input-bar-section" class="text-left"></div></div>').appendTo('#graph-container');
-    $('<div class="row"><div id="chart-section"></div></div>').appendTo('#graph-container');
+    $('<div class="row"><div id="chart-section" style="margin: 1vh; padding-right: 1.2vh;"></div></div>').appendTo('#graph-container');
 
     getFileData('garden_data/gardening_web.json', 'json', drawGardenChart, []);
 
@@ -108,7 +112,7 @@ function drawGardenChart(notes_to_display) {
 
 	console.time("sort_data");
 
-	var HTMLtable = '<div class="table-responsive"><table id="diary" class="table table-condensed" cellspacing="0">';
+	var HTMLtable = '<div class="table-responsive"><table id="diary" class="table table-condensed nowrap" cellspacing="0">';
 	HTMLtable += '<thead><tr bgcolor="#E0E0E0"><th colspan="4" style="text-align:right">Month</th><th style="text-align:center" ';
 	HTMLtable += ['colspan="5">Jan','colspan="3">Feb','colspan="5">Mar','colspan="4">Apr','colspan="4">May','colspan="4">Jun','colspan="5">Jul','colspan="5">Aug','colspan="4">Sep','colspan="5">Oct','colspan="4">Nov','colspan="5">Dec'].join('</th><th style="text-align:center" ');
 	HTMLtable += '</th></tr>';
@@ -353,7 +357,7 @@ function drawGardenChart(notes_to_display) {
 
 		// Draw DataTable
 	    $('#diary').DataTable( {
-			"scrollY": 650,
+			"scrollY": '45vh',
 			"scrollX": 400,
 			"autoWidth": false,
 			"lengthMenu": [15, 25, 50, 100],
