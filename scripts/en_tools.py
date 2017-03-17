@@ -661,7 +661,7 @@ def weekly_weather(folder_loc):
 
     weekly_data = nested_dict()
 
-    folder_loc  = folder_loc.replace('/garden-evernote', '')
+    folder_loc  = folder_loc.replace('/garden-evernote/', '')
 
     # Grab data from csv files    
     for year in range(year_current, year_current - 2, -1):
@@ -680,8 +680,8 @@ def weekly_weather(folder_loc):
                     week, month, year = prepare_dates(int(row[0]))
 
                     weekly_data[week][year] = {
-                        'Outside_MIN':  row[1],
-                        'Outside_AVG':  row[2],
+                        'Outside_AVG':  row[1],
+                        'Outside_MIN':  row[2],
                         'Precip_TOTAL': row[3]
                     }
         
@@ -692,7 +692,7 @@ def weekly_weather(folder_loc):
     for w in range(1,54):
         years = weekly_data[w].keys()
 
-        for item in ['Outside_MIN', 'Outside_AVG', 'Precip_TOTAL']:
+        for item in ['Outside_AVG', 'Outside_MIN', 'Precip_TOTAL']:
             try:
                 weekly_data[w]['AVG'][item] = sum(float(weekly_data[w][y][item]) for y in years) / len(years)
             except Exception, e:
