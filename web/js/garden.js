@@ -174,6 +174,9 @@ function drawGardenChart(notes_to_display) {
 			pop_body += "<script type='text/javascript'>$('#inlinesparkline').sparkline('html',{ type:'bar', barColor:'blue', chartRangeMin: 0, barWidth: '15px' });</script>";
 			pop_body += '<p>Outisde Temp: ' + week_weather[week]['AVG']['Outside_AVG'] + '°C</p>';
 			pop_body += '<p>Outside MIN: ' + week_weather[week]['AVG']['Outside_MIN'] + '°C</p>';
+			pop_body += "<span id='tempsparkline'></span>";
+			pop_body += "<script type='text/javascript'>$('#tempsparkline').sparkline([5.09,2.7,3.77],{type: 'line', width: '100', spotRadius: 3, chartRangeMin:-10});</script>";
+			pop_body += "<script type='text/javascript'>$('#tempsparkline').sparkline([-9,-8,-7],{lineColor: 'red', composite: true, chartRangeMin:-10});</script>";
 			HTML_cell_content_formatted = HTML_cell_content_formatted.replace('%popover_body%', pop_body);
 
 			if (temp < -5) {
@@ -354,6 +357,7 @@ function drawGardenChart(notes_to_display) {
 
 		// Draw sparklines
 		$('#inlinesparkline').sparkline('html', {disableHiddenCheck: true}); 
+		$('#tempsparkline').sparkline('html', {disableHiddenCheck: true}); 
 
 		// Draw DataTable
 	    $('#diary').DataTable( {
