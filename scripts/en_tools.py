@@ -346,7 +346,6 @@ class EvernoteAcc:
                 if afterUSN >= state.updateCount or not afterUSN:
                     break
 
-
             self.logger.debug('Downloading note metadata from evernote - COMPLETE')
 
 
@@ -354,7 +353,6 @@ class EvernoteAcc:
             # Add new update count
             #------------------------------------------------------------------------
             gardening_notes['lastUpdateCount'] = download_data.updateCount
-
 
 
             #------------------------------------------------------------------------
@@ -566,6 +564,9 @@ def web_format(data, state_data):
         
         if not note_plants_no:
             note_plants_no = [float('01.00')]
+
+        if len(note_color) > 1 and 'lgreen' in note_color:
+            note_color.remove('lgreen')
 
         note_event = [state_data[state]['event'] for state in note_states if state_data[state]['event'] is not 'single']
 
