@@ -86,7 +86,7 @@ function drawGardenChart(notes_to_display) {
 		"grey": "#E0E0E0",
 		"teal": "#009688",
 		"lime": "#CDDC39",
-		"ldeep_orange": "#FFAB91",
+		"ldeep_orange": "#FEAB30",
 		"deep_orange": "#FF5722",
 		"blue_grey": "#607D8B",
 		"cyan": "#00BCD4",
@@ -179,21 +179,21 @@ function drawGardenChart(notes_to_display) {
 			pop_body += "<script type='text/javascript'>$('#tempsparkline').sparkline([-9,-8,-7],{lineColor: 'red', composite: true, chartRangeMin:-10});</script>";
 			HTML_cell_content_formatted = HTML_cell_content_formatted.replace('%popover_body%', pop_body);
 
-			if (temp < -5) {
-				temp_color = 'darker_blue';
-			} else if (temp >= -5 && temp < 0 ) {
-				temp_color = 'dark_blue';
-			} else if (temp >= 0 && temp < 5 ) {
-				temp_color = 'blue';
-			} else if (temp >= 5 && temp < 10 ) {
-				temp_color = 'yellow'; 
-			} else if (temp >= 10 && temp < 20 ) {
-				temp_color = 'orange'; 
-			} else if (temp >= 30 ) {
-				temp_color = 'deep_orange';
+			if (temp >= -15 && temp < 5) {
+				// Color scale from light blue to dark blue
+				temp_color = (255*temp + 3825)/20;
+				temp_color = '#00' + parseInt(temp_color).toString(16).toUpperCase() + 'FF';
+			} else if (temp >= 5 && temp < 10){
+				temp_color = '#FFF176';
+			} else if (temp >= 5 && temp < 45) {
+				// Color scale from yellow to orange to red
+				temp_color = 321-(250*temp)/35
+				temp_color = '#FF' + parseInt(temp_color).toString(16).toUpperCase() + '00';
+			} else if (temp >= 45 ) {
+				temp_color = '#FF0000'; //red
 			}
 
-			avgs.push('bgcolor="' + colors[temp_color] + '">');
+			avgs.push('bgcolor="' + temp_color + '">');
 			avgs.push(HTML_cell_content_formatted);
 		} else {
 			avgs.push('> ')
