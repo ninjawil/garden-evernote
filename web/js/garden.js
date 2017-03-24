@@ -181,8 +181,9 @@ function drawGardenChart(notes_to_display) {
 
 			if (temp >= -15 && temp < 5) {
 				// Color scale from light blue to dark blue
-				temp_color = (255*temp + 3825)/20;
-				temp_color = '#00' + parseInt(temp_color).toString(16).toUpperCase() + 'FF';
+				temp_color = (24*temp) +120;
+				temp_color = '#' + parseInt(temp_color).toString(16).toUpperCase();
+				temp_color += parseInt(12.8*temp +166).toString(16).toUpperCase() + 'ff';
 			} else if (temp >= 5 && temp < 10){
 				temp_color = '#FFF176';
 			} else if (temp >= 5 && temp < 45) {
