@@ -681,8 +681,8 @@ def weekly_weather(folder_loc):
                     week, month, year = prepare_dates(int(row[0]))
 
                     weekly_data[week][year] = {
-                        'Outside_AVG':  row[1],
-                        'Outside_MIN':  row[2],
+                        'Outside_MIN':  row[1],
+                        'Outside_AVG':  row[2],
                         'Precip_TOTAL': row[3]
                     }
         
