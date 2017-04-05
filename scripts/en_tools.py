@@ -23,9 +23,9 @@ import evernote.edam.error.ttypes as Errors
 from evernote.api.client import EvernoteClient
 
 # Application modules
-import log
+import toolbox.log as log
 import logging
-import check_process
+import toolbox.check_process as check_process
 # import watchdog as wd
 
 
