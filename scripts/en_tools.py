@@ -638,10 +638,16 @@ def web_format(data, state_data):
                         if not week_d['image']:
                             week_d['image'] = image_link
 
+    # Run through plants sequentially
     f = nested_dict()
     for plant in d:
         for n in d[plant]:
             events = [d[plant][n]['timeline'][y][w]['event'] for y in d[plant][n]['timeline'] for w in range(53) if d[plant][n]['timeline'][y][w]]
+
+            # Mark if plant is alive or dead
+            d[plant][n]['alive'] = False if events[-1] is 'dead' else True
+
+            # Filter plants that do not have a start event
             if 'start' in events:
                 f[plant][n] = d[plant][n]
 
