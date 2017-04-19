@@ -654,6 +654,7 @@ def web_format(data, state_data):
                     location = locs[p][0]
                 else:
                     location = locs[p][1] if locs[p][0] == unicode(location) else locs[p][0]
+            
             d[plant][n]['location'] = location 
             
             # Get events
