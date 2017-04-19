@@ -642,6 +642,21 @@ def web_format(data, state_data):
     f = nested_dict()
     for plant in d:
         for n in d[plant]:
+
+            # Mark last location
+            locs = [d[plant][n]['timeline'][y][w]['locations'] for y in d[plant][n]['timeline'] for w in range(53) if d[plant][n]['timeline'][y][w]]
+ 
+            length = len(locs)
+            for p in range(length):
+                if not locs[p]: continue
+
+                if len(locs[p]) <= 1:
+                    location = locs[p][0]
+                else:
+                    location = locs[p][1] if locs[p][0] == unicode(location) else locs[p][0]
+            d[plant][n]['location'] = location 
+            
+            # Get events
             events = [d[plant][n]['timeline'][y][w]['event'] for y in d[plant][n]['timeline'] for w in range(53) if d[plant][n]['timeline'][y][w]]
 
             # Mark if plant is alive or dead
