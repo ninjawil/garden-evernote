@@ -234,9 +234,11 @@ function drawGardenChart(notes_to_display) {
 				if ((years.indexOf(year) == -1) && plant_dead) break;
 
 				// Populate row contents
-				HTML_row.push('<tr><td nowrap>');
+				HTML_row.push("<tr><td nowrap><a href='https://www.evernote.com/Home.action#st=p&t=");
+				HTML_row.push(plant);
+				HTML_row.push("'>");
 				HTML_row.push(plants[plant].replace(/#/g, ''));
-				HTML_row.push('</td><td nowrap>');
+				HTML_row.push('</a></td><td nowrap>');
 				HTML_row.push(Number(plant_no).toFixed(2));
 				HTML_row.push('</td><td nowrap>');
 				HTML_row.push('%location%');
