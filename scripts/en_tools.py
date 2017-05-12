@@ -232,6 +232,7 @@ class EvernoteAcc:
         '''
         Function gets evernote data and updates gardening JSON file
 
+
         key
         gardening_notes Dictionary with results from file
         cfg             Configuration set up
@@ -658,7 +659,7 @@ def web_format(data, state_data):
             d[plant][n]['location'] = location 
             
             # Get events
-            events = [d[plant][n]['timeline'][y][w]['event'] for y in d[plant][n]['timeline'] for w in range(53) if d[plant][n]['timeline'][y][w]]
+            events = [d[plant][n]['timeline'][y][w]['event'] for y in sorted(d[plant][n]['timeline'].keys()) for w in range(53) if d[plant][n]['timeline'][y][w]]
 
             # Mark if plant is alive or dead
             d[plant][n]['alive'] = False if events[-1] is 'dead' else True
@@ -743,6 +744,11 @@ def main():
         -c, --created=""        - Date for note to be created. Format 2017-12-31 
                                   or in week number 2017-W38 which will pick the 
                                   Thursday date in that week
+
+    e.g.
+        sudo python garden-evernote/scripts/en_tools.py --csv="new_note.csv"
+        sudo python garden-evernote/scripts/en_tools.py -w && rsync -vhz garden-evernote/data/* weather/garden_data
+        
     '''
    
     script_name = os.path.basename(sys.argv[0])
