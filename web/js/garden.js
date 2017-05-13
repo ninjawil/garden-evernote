@@ -234,7 +234,8 @@ function drawGardenChart(notes_to_display) {
 				if ((years.indexOf(year) == -1) && plant_dead) break;
 
 				// Populate row contents
-				HTML_row.push("<tr><td nowrap><a href='https://www.evernote.com/Home.action#st=p&t=");
+				HTML_row.push("<tr><td nowrap>");
+				HTML_row.push("<a href='https://www.evernote.com/Home.action#st=p&t=");
 				HTML_row.push(plant);
 				HTML_row.push("'>");
 				HTML_row.push(plants[plant].replace(/#/g, ''));
@@ -325,9 +326,12 @@ function drawGardenChart(notes_to_display) {
 					HTML_row.push(formatted_HTML_cell);
 				}
 
-				// Update with final year's location
-				HTML_row[HTML_row.indexOf('%location%')] = locations[this_location];
-
+				// Update with final year's location if alive
+				if (notes_to_display[plant][plant_no]['alive']) {
+					HTML_row[HTML_row.indexOf('%location%')] = locations[this_location];
+				} else {
+					HTML_row[HTML_row.indexOf('%location%')] = "dead";
+				}
 			}
 		}
 	}
