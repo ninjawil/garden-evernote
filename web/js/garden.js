@@ -113,11 +113,11 @@ function drawGardenChart(notes_to_display) {
 	console.time("sort_data");
 
 	var HTMLtable = '<div class="table-responsive"><table id="diary" class="table table-condensed nowrap" cellspacing="0">';
-	HTMLtable += '<thead><tr bgcolor="#E0E0E0"><th colspan="4" style="text-align:right">Month</th><th style="text-align:center" ';
+	HTMLtable += '<thead><tr bgcolor="#E0E0E0"><th colspan="5" style="text-align:right">Month</th><th style="text-align:center" ';
 	HTMLtable += ['colspan="5">Jan','colspan="3">Feb','colspan="5">Mar','colspan="4">Apr','colspan="4">May','colspan="4">Jun','colspan="5">Jul','colspan="5">Aug','colspan="4">Sep','colspan="5">Oct','colspan="4">Nov','colspan="5">Dec'].join('</th><th style="text-align:center" ');
 	HTMLtable += '</th></tr>';
-	HTMLtable += '<tr bgcolor="#E0E0E0"><th colspan="4" style="text-align:right">Week Number</th>%week_no%</tr>';
-	HTMLtable += '<tr bgcolor="#E0E0E0"><th>Plant Name</th><th>No.</th><th>Location</th><th>Year</th>%avg_temps%</tr></thead>';
+	HTMLtable += '<tr bgcolor="#E0E0E0"><th colspan="5" style="text-align:right">Week Number</th>%week_no%</tr>';
+	HTMLtable += '<tr bgcolor="#E0E0E0"><th>Plant Name</th><th>No.</th><th>Location</th><th>Year</th><th>Alive</th>%avg_temps%</tr></thead>';
 	HTMLtable += '<tbody id="plant-table">%plants%</tbody></table></div>';
 
 	var HTML_cell 			= '<td %cell_colour% %border% nowrap>%cell_contents%</td>'
@@ -235,16 +235,24 @@ function drawGardenChart(notes_to_display) {
 
 				// Populate row contents
 				HTML_row.push("<tr><td nowrap>");
+				if (!notes_to_display[plant][plant_no]['alive']) HTML_row.push("<strike>");
 				HTML_row.push("<a href='https://www.evernote.com/Home.action#st=p&t=");
 				HTML_row.push(plant);
 				HTML_row.push("'>");
 				HTML_row.push(plants[plant].replace(/#/g, ''));
+				if (!notes_to_display[plant][plant_no]['alive']) HTML_row.push("</strike>");
 				HTML_row.push('</a></td><td nowrap>');
 				HTML_row.push(Number(plant_no).toFixed(2));
 				HTML_row.push('</td><td nowrap>');
 				HTML_row.push('%location%');
 				HTML_row.push('</td><td>');
 				HTML_row.push(year);
+				HTML_row.push('</td><td>');
+				if (notes_to_display[plant][plant_no]['alive']) {
+					HTML_row.push("alive");
+				} else {
+					HTML_row.push("dead");
+				}
 				HTML_row.push('</td>');
 
 				// Loop through each week
@@ -326,12 +334,8 @@ function drawGardenChart(notes_to_display) {
 					HTML_row.push(formatted_HTML_cell);
 				}
 
-				// Update with final year's location if alive
-				if (notes_to_display[plant][plant_no]['alive']) {
-					HTML_row[HTML_row.indexOf('%location%')] = locations[this_location];
-				} else {
-					HTML_row[HTML_row.indexOf('%location%')] = "dead";
-				}
+				// Update with final year's location
+				HTML_row[HTML_row.indexOf('%location%')] = locations[this_location];
 			}
 		}
 	}
@@ -368,6 +372,7 @@ function drawGardenChart(notes_to_display) {
 
 		// Draw DataTable
 	    $('#diary').DataTable( {
+
 			"scrollY": '45vh',
 			"scrollX": 400,
 			"autoWidth": false,
@@ -385,10 +390,12 @@ function drawGardenChart(notes_to_display) {
 			// },
 			"columnDefs": [
 				{ "targets": [0, 1, 2, 3], "orderable": true},
+				{ "targets": [4], "visible": false,},
 				{ "targets": '_all', 	"orderable": false },
-				{ "targets": [0, 1, 2, 3], "searchable": true},
+				{ "targets": [0, 1, 2, 3, 4], "searchable": true},
 				{ "targets": '_all', 	"searchable": false }
 			]
+
 		} );
 	} );
 
