@@ -86,7 +86,7 @@ function drawGardenChart(notes_to_display) {
 		"grey": "#E0E0E0",
 		"teal": "#009688",
 		"lime": "#CDDC39",
-		"ldeep_orange": "#FFAB91",
+		"ldeep_orange": "#FEAB30",
 		"deep_orange": "#FF5722",
 		"blue_grey": "#607D8B",
 		"cyan": "#00BCD4",
@@ -113,11 +113,11 @@ function drawGardenChart(notes_to_display) {
 	console.time("sort_data");
 
 	var HTMLtable = '<div class="table-responsive"><table id="diary" class="table table-condensed nowrap" cellspacing="0">';
-	HTMLtable += '<thead><tr bgcolor="#E0E0E0"><th colspan="4" style="text-align:right">Month</th><th style="text-align:center" ';
+	HTMLtable += '<thead><tr bgcolor="#E0E0E0"><th colspan="5" style="text-align:right">Month</th><th style="text-align:center" ';
 	HTMLtable += ['colspan="5">Jan','colspan="3">Feb','colspan="5">Mar','colspan="4">Apr','colspan="4">May','colspan="4">Jun','colspan="5">Jul','colspan="5">Aug','colspan="4">Sep','colspan="5">Oct','colspan="4">Nov','colspan="5">Dec'].join('</th><th style="text-align:center" ');
 	HTMLtable += '</th></tr>';
-	HTMLtable += '<tr bgcolor="#E0E0E0"><th colspan="4" style="text-align:right">Week Number</th>%week_no%</tr>';
-	HTMLtable += '<tr bgcolor="#E0E0E0"><th>Plant Name</th><th>No.</th><th>Location</th><th>Year</th>%avg_temps%</tr></thead>';
+	HTMLtable += '<tr bgcolor="#E0E0E0"><th colspan="5" style="text-align:right">Week Number</th>%week_no%</tr>';
+	HTMLtable += '<tr bgcolor="#E0E0E0"><th>Plant Name</th><th>No.</th><th>Location</th><th>Year</th><th>Alive</th>%avg_temps%</tr></thead>';
 	HTMLtable += '<tbody id="plant-table">%plants%</tbody></table></div>';
 
 	var HTML_cell 			= '<td %cell_colour% %border% nowrap>%cell_contents%</td>'
@@ -174,23 +174,27 @@ function drawGardenChart(notes_to_display) {
 			pop_body += "<script type='text/javascript'>$('#inlinesparkline').sparkline('html',{ type:'bar', barColor:'blue', chartRangeMin: 0, barWidth: '15px' });</script>";
 			pop_body += '<p>Outisde Temp: ' + week_weather[week]['AVG']['Outside_AVG'] + '°C</p>';
 			pop_body += '<p>Outside MIN: ' + week_weather[week]['AVG']['Outside_MIN'] + '°C</p>';
+			pop_body += "<span id='tempsparkline'></span>";
+			pop_body += "<script type='text/javascript'>$('#tempsparkline').sparkline([5.09,2.7,3.77],{type: 'line', width: '100', spotRadius: 3, chartRangeMin:-10});</script>";
+			pop_body += "<script type='text/javascript'>$('#tempsparkline').sparkline([-9,-8,-7],{lineColor: 'red', composite: true, chartRangeMin:-10});</script>";
 			HTML_cell_content_formatted = HTML_cell_content_formatted.replace('%popover_body%', pop_body);
 
-			if (temp < -5) {
-				temp_color = 'darker_blue';
-			} else if (temp >= -5 && temp < 0 ) {
-				temp_color = 'dark_blue';
-			} else if (temp >= 0 && temp < 5 ) {
-				temp_color = 'blue';
-			} else if (temp >= 5 && temp < 10 ) {
-				temp_color = 'yellow'; 
-			} else if (temp >= 10 && temp < 20 ) {
-				temp_color = 'orange'; 
-			} else if (temp >= 30 ) {
-				temp_color = 'deep_orange';
+			if (temp >= -15 && temp < 5) {
+				// Color scale from light blue to dark blue
+				temp_color = (24*temp) +120;
+				temp_color = '#' + parseInt(temp_color).toString(16).toUpperCase();
+				temp_color += parseInt(12.8*temp +166).toString(16).toUpperCase() + 'ff';
+			} else if (temp >= 5 && temp < 10){
+				temp_color = '#FFF176';
+			} else if (temp >= 5 && temp < 45) {
+				// Color scale from yellow to orange to red
+				temp_color = 321-(250*temp)/35
+				temp_color = '#FF' + parseInt(temp_color).toString(16).toUpperCase() + '00';
+			} else if (temp >= 45 ) {
+				temp_color = '#FF0000'; //red
 			}
 
-			avgs.push('bgcolor="' + colors[temp_color] + '">');
+			avgs.push('bgcolor="' + temp_color + '">');
 			avgs.push(HTML_cell_content_formatted);
 		} else {
 			avgs.push('> ')
@@ -230,14 +234,25 @@ function drawGardenChart(notes_to_display) {
 				if ((years.indexOf(year) == -1) && plant_dead) break;
 
 				// Populate row contents
-				HTML_row.push('<tr><td nowrap>');
+				HTML_row.push("<tr><td nowrap>");
+				if (!notes_to_display[plant][plant_no]['alive']) HTML_row.push("<strike>");
+				HTML_row.push("<a href='https://www.evernote.com/Home.action#st=p&t=");
+				HTML_row.push(plant);
+				HTML_row.push("'>");
 				HTML_row.push(plants[plant].replace(/#/g, ''));
-				HTML_row.push('</td><td nowrap>');
+				if (!notes_to_display[plant][plant_no]['alive']) HTML_row.push("</strike>");
+				HTML_row.push('</a></td><td nowrap>');
 				HTML_row.push(Number(plant_no).toFixed(2));
 				HTML_row.push('</td><td nowrap>');
 				HTML_row.push('%location%');
 				HTML_row.push('</td><td>');
 				HTML_row.push(year);
+				HTML_row.push('</td><td>');
+				if (notes_to_display[plant][plant_no]['alive']) {
+					HTML_row.push("alive");
+				} else {
+					HTML_row.push("dead");
+				}
 				HTML_row.push('</td>');
 
 				// Loop through each week
@@ -321,7 +336,6 @@ function drawGardenChart(notes_to_display) {
 
 				// Update with final year's location
 				HTML_row[HTML_row.indexOf('%location%')] = locations[this_location];
-
 			}
 		}
 	}
@@ -354,9 +368,11 @@ function drawGardenChart(notes_to_display) {
 
 		// Draw sparklines
 		$('#inlinesparkline').sparkline('html', {disableHiddenCheck: true}); 
+		$('#tempsparkline').sparkline('html', {disableHiddenCheck: true}); 
 
 		// Draw DataTable
 	    $('#diary').DataTable( {
+
 			"scrollY": '45vh',
 			"scrollX": 400,
 			"autoWidth": false,
@@ -374,10 +390,12 @@ function drawGardenChart(notes_to_display) {
 			// },
 			"columnDefs": [
 				{ "targets": [0, 1, 2, 3], "orderable": true},
+				{ "targets": [4], "visible": false,},
 				{ "targets": '_all', 	"orderable": false },
-				{ "targets": [0, 1, 2, 3], "searchable": true},
+				{ "targets": [0, 1, 2, 3, 4], "searchable": true},
 				{ "targets": '_all', 	"searchable": false }
 			]
+
 		} );
 	} );
 

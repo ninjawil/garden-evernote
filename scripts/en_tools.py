@@ -23,9 +23,9 @@ import evernote.edam.error.ttypes as Errors
 from evernote.api.client import EvernoteClient
 
 # Application modules
-import log
+import toolbox.log as log
 import logging
-import check_process
+import toolbox.check_process as check_process
 # import watchdog as wd
 
 
@@ -232,6 +232,7 @@ class EvernoteAcc:
         '''
         Function gets evernote data and updates gardening JSON file
 
+
         key
         gardening_notes Dictionary with results from file
         cfg             Configuration set up
@@ -346,7 +347,6 @@ class EvernoteAcc:
                 if afterUSN >= state.updateCount or not afterUSN:
                     break
 
-
             self.logger.debug('Downloading note metadata from evernote - COMPLETE')
 
 
@@ -354,7 +354,6 @@ class EvernoteAcc:
             # Add new update count
             #------------------------------------------------------------------------
             gardening_notes['lastUpdateCount'] = download_data.updateCount
-
 
 
             #------------------------------------------------------------------------
@@ -567,6 +566,9 @@ def web_format(data, state_data):
         if not note_plants_no:
             note_plants_no = [float('01.00')]
 
+        if len(note_color) > 1 and 'lgreen' in note_color:
+            note_color.remove('lgreen')
+
         note_event = [state_data[state]['event'] for state in note_states if state_data[state]['event'] is not 'single']
 
         # These are ordered in priority of event 
@@ -637,10 +639,32 @@ def web_format(data, state_data):
                         if not week_d['image']:
                             week_d['image'] = image_link
 
+    # Run through plants sequentially
     f = nested_dict()
     for plant in d:
         for n in d[plant]:
-            events = [d[plant][n]['timeline'][y][w]['event'] for y in d[plant][n]['timeline'] for w in range(53) if d[plant][n]['timeline'][y][w]]
+
+            # Mark last location
+            locs = [d[plant][n]['timeline'][y][w]['locations'] for y in d[plant][n]['timeline'] for w in range(53) if d[plant][n]['timeline'][y][w]]
+ 
+            length = len(locs)
+            for p in range(length):
+                if not locs[p]: continue
+
+                if len(locs[p]) <= 1:
+                    location = locs[p][0]
+                else:
+                    location = locs[p][1] if locs[p][0] == unicode(location) else locs[p][0]
+            
+            d[plant][n]['location'] = location 
+            
+            # Get events
+            events = [d[plant][n]['timeline'][y][w]['event'] for y in sorted(d[plant][n]['timeline'].keys()) for w in range(53) if d[plant][n]['timeline'][y][w]]
+
+            # Mark if plant is alive or dead
+            d[plant][n]['alive'] = False if events[-1] is 'dead' else True
+
+            # Filter plants that do not have a start event
             if 'start' in events:
                 f[plant][n] = d[plant][n]
 
@@ -661,7 +685,7 @@ def weekly_weather(folder_loc):
 
     weekly_data = nested_dict()
 
-    folder_loc  = folder_loc.replace('/garden-evernote', '')
+    folder_loc  = folder_loc.replace('/garden-evernote/', '')
 
     # Grab data from csv files    
     for year in range(year_current, year_current - 2, -1):
@@ -692,7 +716,7 @@ def weekly_weather(folder_loc):
     for w in range(1,54):
         years = weekly_data[w].keys()
 
-        for item in ['Outside_MIN', 'Outside_AVG', 'Precip_TOTAL']:
+        for item in ['Outside_AVG', 'Outside_MIN', 'Precip_TOTAL']:
             try:
                 weekly_data[w]['AVG'][item] = sum(float(weekly_data[w][y][item]) for y in years) / len(years)
             except Exception, e:
@@ -720,6 +744,11 @@ def main():
         -c, --created=""        - Date for note to be created. Format 2017-12-31 
                                   or in week number 2017-W38 which will pick the 
                                   Thursday date in that week
+
+    e.g.
+        sudo python garden-evernote/scripts/en_tools.py --csv="new_note.csv"
+        sudo python garden-evernote/scripts/en_tools.py -w && rsync -vhz garden-evernote/data/* weather/garden_data
+        
     '''
    
     script_name = os.path.basename(sys.argv[0])
