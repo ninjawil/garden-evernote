@@ -171,14 +171,45 @@ function drawGardenChart(notes_to_display) {
 			var HTML_cell_content_formatted = HTML_cell_content.replace('%symbol%', temp);
 			HTML_cell_content_formatted = HTML_cell_content_formatted.replace('%popover_title%', 'Week ' + week + ' Averages');
 
+			var yr_wd_precip = '', 
+				yr_wd_outside_min = '', 
+				yr_wd_outside_avg = '';
+
+			var this_year = today.getFullYear()
+			var years = [this_year-2, this_year-1, this_year];
+			
+			for (year in week_weather[week]) {
+				if (!week_weather[week].hasOwnProperty(year)) continue;
+				if (year == 'AVG') continue;
+
+				year = year.toString()
+
+				if (yr_wd_precip != '') yr_wd_precip += ',';
+				yr_wd_precip += week_weather[week][year]['Precip_TOTAL'];
+
+				if (yr_wd_outside_avg != '') yr_wd_outside_avg += ',';
+				yr_wd_outside_avg += week_weather[week][year]['Outside_AVG'];
+
+				if (yr_wd_outside_min != '') yr_wd_outside_min += ',';
+				yr_wd_outside_min += week_weather[week][year]['Outside_MIN'];
+			}
+
+			console.log(yr_wd_precip);
+			console.log(yr_wd_outside_avg);
+			console.log(yr_wd_outside_min);
+
 			var pop_body = '<p>Precip TOTAL: ' + week_weather[week]['AVG']['Precip_TOTAL'] + 'mm</p>';
-			pop_body += "<span id='inlinesparkline'>5.09,2.7,3.77</span>";
+			pop_body += "<span id='inlinesparkline'>" + yr_wd_precip + "</span>";
 			pop_body += "<script type='text/javascript'>$('#inlinesparkline').sparkline('html',{ type:'bar', barColor:'blue', chartRangeMin: 0, barWidth: '15px' });</script>";
-			pop_body += '<p>Outisde Temp: ' + week_weather[week]['AVG']['Outside_AVG'] + '°C</p>';
+			pop_body += '<p>Outside Temp: ' + week_weather[week]['AVG']['Outside_AVG'] + '°C</p>';
 			pop_body += '<p>Outside MIN: ' + week_weather[week]['AVG']['Outside_MIN'] + '°C</p>';
 			pop_body += "<span id='tempsparkline'></span>";
-			pop_body += "<script type='text/javascript'>$('#tempsparkline').sparkline([5.09,2.7,3.77],{type: 'line', width: '100', spotRadius: 3, chartRangeMin:-10});</script>";
-			pop_body += "<script type='text/javascript'>$('#tempsparkline').sparkline([-9,-8,-7],{lineColor: 'red', composite: true, chartRangeMin:-10});</script>";
+			pop_body += "<script type='text/javascript'>$('#tempsparkline').sparkline([";
+			pop_body += yr_wd_outside_avg;
+			pop_body += "],{type: 'line', width: '100', spotRadius: 3, chartRangeMin:-10});</script>";
+			pop_body += "<script type='text/javascript'>$('#tempsparkline').sparkline([";
+			pop_body += yr_wd_outside_min;
+			pop_body += "],{lineColor: 'red', composite: true, chartRangeMin:-10});</script>";
 			HTML_cell_content_formatted = HTML_cell_content_formatted.replace('%popover_body%', pop_body);
 
 			if (temp >= -15 && temp < 5) {
