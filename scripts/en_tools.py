@@ -704,9 +704,9 @@ def weekly_weather(folder_loc):
                     week, month, year = prepare_dates(int(row[0]))
 
                     weekly_data[week][year] = {
-                        'Outside_MIN':  row[1],
-                        'Outside_AVG':  row[2],
-                        'Precip_TOTAL': row[3]
+                        'Outside_MIN':  "{:0.1f}".format(float(row[1])),
+                        'Outside_AVG':  "{:0.1f}".format(float(row[2])),
+                        'Precip_TOTAL': "{:0.1f}".format(float(row[3]))
                     }
         
         except IOError:
@@ -718,7 +718,9 @@ def weekly_weather(folder_loc):
 
         for item in ['Outside_AVG', 'Outside_MIN', 'Precip_TOTAL']:
             try:
-                weekly_data[w]['AVG'][item] = sum(float(weekly_data[w][y][item]) for y in years) / len(years)
+                avg = sum(float(weekly_data[w][y][item]) for y in years) / len(years);
+                weekly_data[w]['AVG'][item] = "{:0.1f}".format(avg);
+                
             except Exception, e:
                 weekly_data[w]['AVG'][item] = None
         
