@@ -194,10 +194,6 @@ function drawGardenChart(notes_to_display) {
 				yr_wd_outside_min += week_weather[week][year]['Outside_MIN'];
 			}
 
-			console.log(yr_wd_precip);
-			console.log(yr_wd_outside_avg);
-			console.log(yr_wd_outside_min);
-
 			var pop_body = '<p>Precip TOTAL: ' + week_weather[week]['AVG']['Precip_TOTAL'] + 'mm</p>';
 			pop_body += "<span id='inlinesparkline'>" + yr_wd_precip + "</span>";
 			pop_body += "<script type='text/javascript'>$('#inlinesparkline').sparkline('html',{ type:'bar', barColor:'blue', chartRangeMin: 0, barWidth: '15px' });</script>";
