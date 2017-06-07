@@ -17,6 +17,8 @@ function displayGarden() {
 	$('#garden').parent().addClass('active');
 
 	$('#sidebar').hide();
+	$('#header').hide();
+	// $('#sidebar').animate({width: 'toggle'});
 	// $('#sidebar').animate({width: 'toggle'});
 	$('#main').removeClass('col-sm-10').addClass('col-sm-12');
 
@@ -373,7 +375,7 @@ function drawGardenChart(notes_to_display) {
 		// Draw DataTable
 	    $('#diary').DataTable( {
 
-			"scrollY": '45vh',
+			"scrollY": '55vh',
 			"scrollX": 400,
 			"autoWidth": false,
 			"lengthMenu": [15, 25, 50, 100],
