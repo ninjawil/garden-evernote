@@ -44,6 +44,28 @@ def get_guid(items, search_string):
     return {item.guid: item.name for item in items if item.name.find(search_string) > -1}
 
 #---------------------------------------------------------------------------
+# Get guid for tag
+#---------------------------------------------------------------------------
+def check_non_ascii(string):
+    '''
+    Function checks string for non ascii characters
+
+    string           string to check
+
+    '''
+
+    name = ''
+
+    for c in string:
+        if 0 <= ord(c) <= 127:
+            name += c
+        else:
+            name += '?'
+
+    return name
+
+
+#---------------------------------------------------------------------------
 # Get all children from parent tag
 #---------------------------------------------------------------------------
 def get_tag_children(tag_list, parent_guid):
@@ -147,9 +169,10 @@ class EvernoteAcc:
     #---------------------------------------------------------------------------
     # Sets up the Evernote Account 
     #--------------------------------------------------------------------------- 
-    def __init__(self, key, config, sand_box= False):
+    def __init__(self, key, config, sand_box= False, verbose= False):
 
-        self.key    = key     
+        self.key    = key
+        self.verbose = verbose     
         self.logger = logging.getLogger('root')
         self.cfg    = { 
             "gardening_tag":    config['evernote']['GARDENING_TAG'],
@@ -282,6 +305,9 @@ class EvernoteAcc:
             #------------------------------------------------------------------------
             notebooks       = self.note_store.listNotebooks()
             notebook_tag    = get_guid(notebooks, self.cfg['notebook']).keys()[0]
+            self.logger.debug('Notebook: {n} Guid: {x}'.format(
+                n=self.cfg['notebook'], 
+                x=notebook_tag))
 
 
             #------------------------------------------------------------------------
@@ -289,11 +315,21 @@ class EvernoteAcc:
             #------------------------------------------------------------------------
             tags            = self.note_store.listTags()
 
+            for tag in tags:
+                c = check_non_ascii(tag.name)
+                if c != tag.name:
+                    self.logger.error('Non ascii character in tag name: {n}'.format(n= c))
+                    sys.exit()
+
             gardening_notes['plant_tags']   = get_guid(tags, self.cfg['plant_tag_id'])
             gardening_tag                   = get_guid(tags, self.cfg['gardening_tag']).keys()[0]
+            self.logger.debug('gardening_tag guid: {x}'.format(x=gardening_tag))
             gardening_loc_tag               = get_guid(tags, self.cfg['location_tag_id']).keys()
+            self.logger.debug('gardening_loc_tag guid: {x}'.format(x=gardening_loc_tag))
             gardening_state_tag             = get_guid(tags, self.cfg['state_tag_id']).keys()     
+            self.logger.debug('gardening_state_tag guid: {x}'.format(x=gardening_state_tag))
             p_number_tag                    = get_guid(tags, self.cfg['plant_no_id']).keys()
+            self.logger.debug('Get guid result: {x}'.format(x=p_number_tag))
 
             if len(gardening_state_tag) > 1 or len(gardening_loc_tag) > 1 or len(gardening_loc_tag) > 1:
                 self.logger.error("More than one Tag Parent found. Exiting...")
@@ -795,6 +831,7 @@ def main():
         new_note = False
         format_into_web = False
         file_csv = False
+        verbose = False
         note_data = {
                 'created':  int(datetime.datetime.now().strftime("%s")) * 1000,
                 'title':    'new note',
@@ -804,8 +841,8 @@ def main():
             }
  
         try:
-            opts, args = getopt.getopt(sys.argv[1:],'hxf:wst:g:c:',
-                ['help', 'sync-off', 'csv=', 'web', 'force-sync', 'sandbox', 'title=', 'tags=', 'created='])
+            opts, args = getopt.getopt(sys.argv[1:],'hvxf:wst:g:c:',
+                ['help', 'verbose', 'sync-off', 'csv=', 'web', 'force-sync', 'sandbox', 'title=', 'tags=', 'created='])
         except getopt.GetoptError:
             usage()
             sys.exit(2)
@@ -815,6 +852,11 @@ def main():
                 key_file = 'evernote_key_sand.json'
                 logger.info('Using Evernote sandbox')
                 sand_box = True 
+                continue
+
+            if opt in ('-v', '--verbose'):
+                logger.info('Verbose requested')
+                verbose = True
                 continue
 
             if opt in ('-s', '--force-sync'):
@@ -860,7 +902,7 @@ def main():
                                         key_file= '{fl}keys/{fk}'.format(fl= folder_loc, 
                                                                          fk=key_file))
 
-        EnAcc = EvernoteAcc(key, config, sand_box)
+        EnAcc = EvernoteAcc(key, config, sand_box, verbose)
 
 
         #---------------------------------------------------------------------------
@@ -906,8 +948,10 @@ def main():
         # READ DATA FROM EN AND WRITE TO FILE
         #---------------------------------------------------------------------------
         try:
+            if verbose: logger.info('Opening gardening.json file')
             with open('{fl}/data/gardening.json'.format(fl= folder_loc), 'r') as f:
                 gardening_notes = json.load(f)
+            if verbose: logger.info('Opening OK')
 
         except Exception, e:
             if format_into_web and not sync:
