@@ -24,7 +24,7 @@ function displayGarden() {
 
 	// Clear chart area
 	$('#graph-container').empty();
-	$('#graph-container').css('overflowY', 'hidden');
+	$('#graph-container').css({'overflowY':'hidden', 'height':'auto'});
 
     // Set up chart screen sections
     $('<div class="row"><div id="chart-section" style="margin: 1vh; padding-right: 1.2vh;"></div></div>').appendTo('#graph-container');
